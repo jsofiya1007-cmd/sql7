@@ -39,7 +39,7 @@ FROM emp_details;
 
 
 SELECT sales_employee, fiscal_year, sale,
-       SUM(sale) OVER (PARTITION BY sales_employee ORDER BY fiscal_year ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_sum,
+       SUM(sale) OVER (PARTITION BY sales_employee ORDER BY fiscal_year) AS running_sum,
        MAX(sale) OVER (PARTITION BY sales_employee) AS max_sale,
        MIN(sale) OVER (PARTITION BY sales_employee) AS min_sale,
        RANK() OVER (PARTITION BY sales_employee ORDER BY sale DESC) AS rank_sale
