@@ -1,0 +1,46 @@
+1.Write a single SQL statement which should display window function like SUM,MAX,MIN,Rank .
+CREATE DATABASE employees;
+USE employees;
+
+CREATE TABLE emp_details (
+  sales_employee VARCHAR(100) NOT NULL,
+  fiscal_year DOUBLE,
+  sale INT NOT NULL
+);
+
+INSERT INTO emp_details VALUES
+('sofi',2016,180),
+('bala',2017,150),
+('bala',2016,130),
+('bala',2015,120),
+('sofi',2016,130),
+('sofi',2017,102),
+('magil',2016,150),
+('magil',2017,140);
+
+
+SELECT * FROM emp_details;
+
+
+SELECT sales_employee, fiscal_year, sale,
+       LAG(sale,1,0) OVER (PARTITION BY sales_employee ORDER BY fiscal_year) AS previous_year_sale
+FROM emp_details;
+
+
+SELECT sales_employee, fiscal_year, sale,
+       LEAD(sale,1,0) OVER (PARTITION BY sales_employee ORDER BY fiscal_year) AS future_year_sale
+FROM emp_details;
+
+
+SELECT sales_employee, fiscal_year, sale,
+       LAG(sale,1,0) OVER (PARTITION BY sales_employee ORDER BY fiscal_year) AS previous_year_sale,
+       sale - LAG(sale,1,0) OVER (PARTITION BY sales_employee ORDER BY fiscal_year) AS difference
+FROM emp_details;
+
+
+SELECT sales_employee, fiscal_year, sale,
+       SUM(sale) OVER (PARTITION BY sales_employee ORDER BY fiscal_year ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_sum,
+       MAX(sale) OVER (PARTITION BY sales_employee) AS max_sale,
+       MIN(sale) OVER (PARTITION BY sales_employee) AS min_sale,
+       RANK() OVER (PARTITION BY sales_employee ORDER BY sale DESC) AS rank_sale
+FROM emp_details;
